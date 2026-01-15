@@ -1,0 +1,171 @@
+-- DROP DATABASE jaui;
+-- DROP TABLE usuarios;
+
+CREATE DATABASE jaui;
+USE jaui;
+
+
+CREATE TABLE usuarios(
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_usuario VARCHAR(30),
+    contra_usuario VARCHAR(200),
+    email_usuario VARCHAR(50),
+    sexo_usuario ENUM('Hombre','Mujer','Indefinido'),
+    privilegio_usuario ENUM('Cliente','Proveedor','Admin'),
+    saldo INT DEFAULT 0
+);
+
+-- Para simplificar las pruebas les puse a todos los usuarios la misma contraseña
+-- Pero si creas un usuario nuevo con una contraseña distinta a PauContra el hash será diferente
+
+INSERT INTO usuarios (id_usuario, nombre_usuario, contra_usuario, email_usuario, sexo_usuario, privilegio_usuario, saldo) VALUES
+(1, 'Pau', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Pau@correo.com', 'Hombre', 'Admin', 0),
+(2, 'admin2', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Hoid@correo.com', 'Hombre', 'Admin', 0),
+(3, 'admin3','$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6','Sagaz@Correo', 'Mujer', 'Admin', 0),
+(4, 'Punpun', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Punpun@correo.com', 'Hombre', 'Cliente', 0),
+(5, 'Kaladin', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Kaladin@correo.com', 'Hombre', 'Cliente', 50),
+(6, 'Harry', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Harry@correo.com', 'Mujer', 'Cliente', 100),
+(7, 'Kvothe', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Kvothe@correo.com', 'Mujer', 'Cliente', 150),
+(8, 'Universal', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Elend@correo.com', 'Indefinido', 'Proveedor', 0),
+(9, 'Sony', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Kelsier@correo.com', 'Indefinido', 'Proveedor', 0),
+(10, 'Warner', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Vin@correo.com', 'Indefinido', 'Proveedor', 0),
+(11, 'Emergentes', '$2y$10$6GSAFhFWk5D3XxTkaIpIYe8hVRJ8g8bYmlenlbQbiMbFZexx5TtL6', 'Sazed@correo.com', 'Indefinido', 'Proveedor', 0);
+
+
+CREATE TABLE artistas(
+    id_artista INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_artista VARCHAR(100) NOT NULL UNIQUE,
+    id_proveedor INT NOT NULL,
+    imagen_artista VARCHAR(50) NOT NULL,
+    descripcion TEXT,
+    estado ENUM('Pendiente', 'Aprobado', 'Denegado') NOT NULL DEFAULT 'Pendiente', 
+    fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_admin_aprobador INT NULL,
+    
+    FOREIGN KEY (id_proveedor) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_admin_aprobador) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
+);
+
+
+INSERT INTO artistas (id_artista, nombre_artista, id_proveedor, imagen_artista, estado, id_admin_aprobador) VALUES
+(1, 'Justin Beaber', 8, '../img/artistas/justin.jpg', 'Denegado', 1),
+(2, 'Aitana', 8, '../img/artistas/aitana.jpg', 'Denegado', 2),
+(3, 'Kase O', 9, '../img/artistas/kaseo.jpg', 'Aprobado', 1),
+(4, 'Hoke', 9, '../img/artistas/hoke.png', 'Pendiente', NULL),
+(5, 'Extremoduro', 8, '../img/artistas/extremoduro.jpg', 'Aprobado', 2),
+(6, 'Fito Fitipaldi', 8, '../img/artistas/fito.jpg', 'Aprobado', 1),
+(7, 'Kid Keo', 8, '../img/artistas/kidkeo.jpg', 'Aprobado', 1),
+(8, 'El Grecas', 8, '../img/artistas/grecas.jpeg', 'Aprobado', 2),
+(9, 'mvrk', 11, '../img/artistas/mvrk.jpg', 'Pendiente', NULL),
+(10, 'D.Valentino', 11, '../img/artistas/dvalentino.jpg', 'Aprobado', 1),
+(11, 'Carolina Durante', 10, '../img/artistas/carolinadurante.png', 'Aprobado', 2),
+(12, 'Depresion Sonora', 10, '../img/artistas/depresionsonora.png', 'Aprobado', 1),
+(13, 'Rojuu', 11, '../img/artistas/rojuu.jpg', 'Aprobado', 2),
+(14, 'Orslok', 11, '../img/artistas/orslok.png', 'Aprobado', 1),
+(15, 'Luisaker', 10, '../img/artistas/luisaker.jpg', 'Aprobado', 2),
+(16, 'JhonPo', 10, '../img/artistas/jhonpo.jpg', 'Pendiente', NULL),
+(17, 'Metrika', 10, '../img/artistas/metrika.jpg', 'Aprobado', 2),
+(18, 'Yung Beef', 10, '../img/artistas/yungbeef.jpg', 'Denegado', 1),
+(19, 'Bluu', 11, '../img/artistas/bluu.jpg', 'Aprobado', 2),
+(20, 'Al Safir', 8, '../img/artistas/alsafir.jpg', 'Aprobado', 1);
+
+CREATE TABLE eventos_solicitados (
+    id_evento_solicitado INT AUTO_INCREMENT PRIMARY KEY,
+
+    id_artista INT NOT NULL,
+    nombre_evento VARCHAR(255) NOT NULL,
+    precio_base INT NOT NULL,
+    categoria ENUM('Pop','Rap','Rock','Techno','Under','Salsa','Bachata','Regueton','Jazz','Merengue','Drill','Dembow') NOT NULL,
+    id_organizador INT NOT NULL,
+    fecha_hora_inicio DATETIME NOT NULL,
+    ubicacion_detalle VARCHAR(255) NOT NULL,
+    slots_totales INT NOT NULL DEFAULT 100,
+    estado ENUM('Pendiente', 'Aprobado', 'Denegado') NOT NULL DEFAULT 'Pendiente',
+    fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_admin_aprobador INT NULL,
+    comentario_admin TEXT NULL,
+
+    FOREIGN KEY (id_artista) REFERENCES artistas(id_artista) ON DELETE CASCADE,
+    FOREIGN KEY (id_organizador) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_admin_aprobador) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
+);
+
+INSERT INTO eventos_solicitados 
+    (id_artista, nombre_evento, precio_base, categoria, id_organizador, fecha_hora_inicio, ubicacion_detalle, slots_totales, estado, id_admin_aprobador, comentario_admin) VALUES
+    (17, 'Femme Fatale', 35, 'Rap', 10, '2025-12-28 20:00:00', 'Teatro Lope de Vega, Madrid', 12, 'Aprobado', 2, NULL),
+    (6, 'Antes de que cuente 10', 50, 'Rock', 8, '2026-11-20 18:00:00', 'Teatro Lope de Vega, Madrid', 8, 'Aprobado', 1, NULL),
+    (3, 'El Circulo', 30, 'Rap', 9, '2026-01-30 21:00:00', 'Estadi Montilivi, Girona', 10, 'Aprobado', 2, NULL),
+    (3, 'Jazz Magnetism', 30, 'Rap', 9, '2026-01-01 20:00:00', 'WiZink Center, Madrid', 17, 'Denegado', 1, 'La localización ya tiene un evento deportivo en esa fecha. Por favor, reubicar.'),
+    (5, 'Un ultimo poema', 45, 'Rock', 8, '2026-01-10 20:00:00', 'Estadio Santiago Bernabéu, Madrid', 50, 'Aprobado', 2, NULL),
+    (6, 'Por la boca vive el pez', 55, 'Rock', 9, '2026-02-02 19:00:00', 'Palacio de los Deportes, Madrid', 12, 'Pendiente', NULL, NULL),
+    (7, 'El empalador', 30, 'Rap', 8, '2026-02-05 21:30:00', 'Salón El Sol, Madrid', 18, 'Aprobado', 1, NULL),
+    (8, 'Escrito en la M30', 20, 'Rap', 11, '2026-08-12 23:00:00', 'Playa de la Barceloneta, Barcelona', 100, 'Aprobado', 2, NULL),
+    (10, 'Rosa y Rojo', 50, 'Pop', 10, '2026-01-25 21:00:00', 'WiZink Center, Madrid', 12, 'Aprobado', 2, NULL),
+    (11, 'Elige tu propia aventura', 25, 'Pop', 8, '2026-03-10 19:30:00', 'Sala Apolo, Barcelona', 50, 'Aprobado', 1, NULL),
+    (12, 'Gasolina y Mechero', 40, 'Rock', 11, '2026-02-03 22:00:00', 'La Rambleta, Valencia', 30, 'Pendiente', NULL, NULL),
+    (13, 'Roku Roku', 35, 'Rap', 10, '2026-02-18 21:00:00', 'Café La Palma, Madrid', 20, 'Aprobado', 2, NULL),
+    (14, 'Tofu Delivery', 30, 'Rap', 9, '2026-04-25 22:00:00', 'Razzmatazz, Barcelona', 20, 'Aprobado', 1, NULL),
+    (15, 'Easy', 45, 'Regueton', 8, '2026-06-20 21:00:00', 'Marbella Arena, Marbella', 100, 'Pendiente', NULL, NULL),
+    (17, 'Toto de loca', 50, 'Rap', 10, '2026-01-28 22:30:00', 'Sala La 2 de Apolo, Barcelona', 10, 'Aprobado', 1, NULL),
+    (19, 'Sexy con amor', 40, 'Rap', 9, '2026-01-18 21:30:00', 'Teatro Barceló, Madrid', 15, 'Aprobado', 2, NULL),
+    (20, 'Shars', 30, 'Regueton', 8, '2026-02-10 20:00:00', 'Gran Canaria Arena, Las Palmas', 50, 'Pendiente', NULL, NULL),
+    (8, 'Greconeta', 30, 'Regueton', 11, '2026-04-05 23:00:00', 'Sala Joy Eslava, Madrid', 15, 'Aprobado', 2, NULL),
+    (3, 'Mitad y Mitad', 50, 'Rap', 9, '2026-02-01 20:30:00', 'WiZink Center, Madrid', 20, 'Aprobado', 1, NULL),
+    (6, 'Cada vez cadaver', 60, 'Rock', 8, '2026-02-20 19:00:00', 'Palacio de los Deportes, Madrid', 25, 'Pendiente', NULL, NULL),
+    (15, 'Quedate', 40, 'Regueton', 8, '2026-07-25 22:00:00', 'Playa de la Victoria, Cádiz', 100, 'Aprobado', 2, NULL),
+    (13, 'Kor Kor Lake', 35, 'Rap', 9, '2026-02-17 21:00:00', 'Sala La 2 de Apolo, Barcelona', 30, 'Aprobado', 1, NULL),
+    (14, 'Shadowban', 25, 'Rap', 11, '2026-01-03 21:00:00', 'Razzmatazz, Barcelona', 20, 'Pendiente', NULL, NULL),
+    (8, '4NGELITO', 30, 'Rap', 10, '2026-01-15 20:00:00', 'Teatro Barcelo, Madrid', 10, 'Aprobado', 2, NULL),
+    (7, 'Celine', 30, 'Rap', 8, '2025-12-27 21:30:00', 'Salón El Sol, Madrid', 18, 'Aprobado', 1, NULL),
+    (6, 'Lo mas lejos a tu lado', 50, 'Rock', 8, '2026-01-10 21:00:00', 'Estadio Olímpico, Barcelona', 25, 'Aprobado', 1, NULL),
+    (11, 'Cuatro Chavales', 30, 'Pop', 11, '2026-08-15 21:00:00', 'Plaza de Toros, Sevilla', 50, 'Pendiente', NULL, NULL),
+    (12, 'Domingo Quimico', 45, 'Rock', 9, '2026-10-25 21:00:00', 'Sala Apolo, Barcelona', 20, 'Aprobado', 2, NULL);
+    
+CREATE TABLE cesta (
+    id_cesta INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,                    
+    id_evento_solicitado INT NOT NULL,          
+    fecha_añadido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    cantidad_entradas INT NOT NULL,
+
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_evento_solicitado) REFERENCES eventos_solicitados(id_evento_solicitado) ON DELETE CASCADE,
+    
+    UNIQUE KEY uk_cesta_unica (id_usuario, id_evento_solicitado)
+);
+
+
+CREATE TABLE compras (
+    id_compra INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NULL,
+    id_evento_solicitado INT NULL,
+    fecha_compra TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    precio_pagado INT NOT NULL,
+    monto_proveedor INT NOT NULL,
+    monto_admins INT NOT NULL,
+    id_proveedor INT NULL,
+    
+    cantidad_entradas INT NOT NULL DEFAULT 1, 
+
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE SET NULL,
+    FOREIGN KEY (id_evento_solicitado) REFERENCES eventos_solicitados(id_evento_solicitado) ON DELETE SET NULL,
+    FOREIGN KEY (id_proveedor) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
+);
+
+INSERT INTO compras (id_usuario, id_evento_solicitado, precio_pagado, monto_proveedor, monto_admins, id_proveedor, cantidad_entradas)
+VALUES 
+    (4, 9, 300, 210, 90, 8, 6),
+    (5, 9, 100, 70, 30, 8, 2),
+    (6, 9, 50, 35, 15, 8, 1),
+    (7, 9, 50, 35, 15, 8, 1),
+    (4, 2, 60, 42, 18, 9, 2),
+    (6, 2, 30, 21, 9, 9, 1),
+    (5, 2, 60, 42, 18, 9, 2),
+    (6, 3, 30, 21, 9, 9, 1),
+    (7, 3, 30, 21, 9, 9, 1),
+    (5, 4, 90, 63, 27, 8, 2),
+    (6, 4, 45, 31.5, 13.5, 8, 1),
+    (5, 6, 60, 42, 18, 8, 2),
+    (7, 7, 20, 14, 6, 11, 1),
+    (4, 13, 70, 49, 21, 10, 2),
+    (7, 14, 30, 21, 9, 9, 1);
