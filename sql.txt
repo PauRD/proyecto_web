@@ -1,8 +1,8 @@
 -- DROP DATABASE jaui;
 -- DROP TABLE usuarios;
 
-CREATE DATABASE jaui;
-USE jaui;
+-- CREATE DATABASE jaui;
+-- USE jaui;
 
 
 CREATE TABLE usuarios(

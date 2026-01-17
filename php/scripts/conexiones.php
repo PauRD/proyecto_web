@@ -1,8 +1,8 @@
 <?php
 
-$servidor='db';
-$usuario='root';
-$password='1234';
+$servidor='mariadb';
+$usuario='admin_jaui';
+$password='4321';
 $basededatos='jaui';
 
 $conexion=new mysqli($servidor,$usuario,$password,$basededatos);
