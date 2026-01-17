@@ -1,18 +1,9 @@
 <?php
 
-$servidor='localhost';
+$servidor='db';
 $usuario='root';
-$password='';
+$password='1234';
 $basededatos='jaui';
 
 $conexion=new mysqli($servidor,$usuario,$password,$basededatos);
-
-// ------------------------------------------------------------- 
-
-// $servidor='192.168.1.102';
-// $usuario='jaui_user';
-// $password='Contrasena1';
-// $basededatos='jaui';
-
-// $conexion=new mysqli($servidor,$usuario,$password,$basededatos);
 ?>
