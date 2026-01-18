@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mariadb: 
+    image: mariadb:10.11
+    container_name: mariadb_jaui
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '1234'
+      MYSQL_DATABASE: jaui
+      MYSQL_USER: admin_jaui
+      MYSQL_PASSWORD: '4321'
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql.txt:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+
+  web:
+    image: paurd/jaui:v2
+    container_name: web_jaui
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - mariadb
+
+volumes:
+  db_data: {}

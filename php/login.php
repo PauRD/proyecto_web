@@ -1,5 +1,61 @@
 <?php
 session_start(); 
+require_once("scripts/conexiones.php");
+
+$mensaje_error = '';
+
+if (isset($_SESSION['id_usuario'])) {
+    echo "<script>window.location.href='jaui.php'</script>";
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre'])) {
+    $nombre = trim($_POST['nombre']);
+    $contra = trim($_POST['contra']);
+        
+    $sql = "SELECT id_usuario, nombre_usuario, contra_usuario, privilegio_usuario, saldo FROM usuarios WHERE nombre_usuario = ?";
+
+    if ($consulta = $conexion->prepare($sql)) {
+        $consulta->bind_param("s", $nombre);
+        $consulta->execute();
+        $resultado = $consulta->get_result();
+
+        if ($resultado->num_rows > 0) {
+            $fila = $resultado->fetch_assoc();
+
+            if (password_verify($contra, $fila['contra_usuario'])) {
+      
+                setcookie("ultimo_valor", $fila['nombre_usuario'], time() + (86400 *30), "/");
+                setcookie("ultimo_password", $contra, time() + (86400 *30), "/");
+                
+                $_SESSION['nombre_usuario'] = $fila['nombre_usuario'];
+                $_SESSION['id_usuario'] = $fila['id_usuario'];
+                $_SESSION['privilegio_usuario'] = $fila['privilegio_usuario'];
+                $_SESSION['saldo'] = $fila['saldo'];
+                    
+                if ($_SESSION['privilegio_usuario'] == 'Admin') {
+                    header("Location: usuarios.php");
+                } else {
+                    header("Location: jaui.php");
+                }
+                exit;
+            } else {
+                $mensaje_error = 'El usuario y la contraseña no coinciden';
+            }
+        } else {
+            $mensaje_error = 'El usuario no existe';
+        }
+
+        $consulta->close();
+    } else {
+        $mensaje_error = 'Error en la consulta, por favor intente nuevamente.';
+    }
+
+    $conexion->close();
+}
+
+$ultimo_valor = isset($_COOKIE["ultimo_valor"]) ? htmlspecialchars($_COOKIE["ultimo_valor"]) : "";
+$ultimo_password = isset($_COOKIE["ultimo_password"]) ? htmlspecialchars($_COOKIE["ultimo_password"]) : "";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -11,62 +67,6 @@ session_start();
 <body class="bg-gray-50 min-h-screen"> 
     <?php
     require_once('cabeza.php');
-    require_once("scripts/conexiones.php");
-
-    $mensaje_error = '';
-
-    if (isset($_SESSION['id_usuario'])) {
-        echo "<script>window.location.href='jaui.php'</script>";
-        exit;
-    }
-
-    $ultimo_valor = isset($_COOKIE["ultimo_valor"]) ? htmlspecialchars($_COOKIE["ultimo_valor"]) : "";
-    $ultimo_password = isset($_COOKIE["ultimo_password"]) ? htmlspecialchars($_COOKIE["ultimo_password"]) : "";
-
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre'])) {
-        $nombre = trim($_POST['nombre']);
-        $contra = trim($_POST['contra']);
-        
-        $sql = "SELECT id_usuario, nombre_usuario, contra_usuario, privilegio_usuario, saldo FROM usuarios WHERE nombre_usuario = ?";
-
-        if ($consulta = $conexion->prepare($sql)) {
-            $consulta->bind_param("s", $nombre);
-            $consulta->execute();
-            $resultado = $consulta->get_result();
-
-            if ($resultado->num_rows > 0) {
-                $fila = $resultado->fetch_assoc();
-
-                if (password_verify($contra, $fila['contra_usuario'])) {
-      
-                    setcookie("ultimo_valor", $fila['nombre_usuario'], time() + (86400 *30), "/");
-                    setcookie("ultimo_password", $contra, time() + (86400 *30), "/");
-                    
-                    $_SESSION['nombre_usuario'] = $fila['nombre_usuario'];
-                    $_SESSION['id_usuario'] = $fila['id_usuario'];
-                    $_SESSION['privilegio_usuario'] = $fila['privilegio_usuario'];
-                    $_SESSION['saldo'] = $fila['saldo'];
-                    
-                    if ($_SESSION['privilegio_usuario'] == 'Admin') {
-                        header("Location: usuarios.php");
-                    } else {
-                        header("Location: jaui.php");
-                    }
-                    exit;
-                } else {
-                    $mensaje_error = 'El usuario y la contraseña no coinciden';
-                }
-            } else {
-                $mensaje_error = 'El usuario no existe';
-            }
-
-            $consulta->close();
-        } else {
-            $mensaje_error = 'Error en la consulta, por favor intente nuevamente.';
-        }
-
-        $conexion->close();
-    }
     ?>
 
     <div class="flex items-center justify-center min-h-[calc(100vh-64px)] p-4">
