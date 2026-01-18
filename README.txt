@@ -1,2 +1,0 @@
-Abra XAMPP e inicie Apache y MySQL, copie el contenido de "sql.txt" y péguelo en "http://127.0.0.1/phpmyadmin/index.php?route=/server/sql". Posteriormente copie las carpetas "img", "js" y "php" junto al archivo "index.php", cree una nueva carpeta en "C:\xampp\htdocs" y pegue lo copiado anteriormente en esta nueva carpeta.
-La pagina web se mostrará en "http://127.0.0.1/x", siendo "x" el nombre que le haya puesto a la carpeta creada.
